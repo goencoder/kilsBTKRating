@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const matches = parseCSV(csvData, true);
         const playerRatings = calculateEloRatings(matches);
         const sortedRankings = generateSortedRankings(playerRatings);
-        displayRankings(sortedRankings);
 
-        copyToClipboard(sortedRankings); // Call your function to copy leaderboard to clipboard
+        const outputCSV = displayRankings(sortedRankings); // Display rankings and get CSV format string
+        copyToClipboard(outputCSV); // Copy CSV format string to clipboard
 
         showNotification();
     });
@@ -96,18 +96,24 @@ document.addEventListener('DOMContentLoaded', function () {
         return rankings;
     }
 
-// Display calculated rankings and copy to clipboard
     function displayRankings(rankings) {
-        let outputCSV = ''; // Initialize the CSV content
+        const outputCSV = generateCSV(rankings);
+        const tableHTML = generateTableHTML(rankings);
+
+        rankingsTable.innerHTML = tableHTML;
+        return outputCSV;
+    }
+
+    function generateCSV(rankings) {
+        let outputCSV = '';
 
         rankings.forEach((entry, index) => {
-            // Build the CSV-like format
             outputCSV += `${index + 1}.\t${entry.player}\t${entry.rating}\n`;
         });
 
-        rankingsTable.innerHTML = generateTableHTML(rankings); // Update the table
-        copyToClipboard(outputCSV); // Copy the CSV to clipboard
+        return outputCSV;
     }
+
 
 // Function to generate the HTML table content
     function generateTableHTML(rankings) {
@@ -123,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         return outputHTML;
     }
-
 // Function to copy text to clipboard
     function copyToClipboard(text) {
         const textArea = document.createElement('textarea');
