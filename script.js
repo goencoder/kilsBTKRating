@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const csvInput = document.getElementById('csvInput');
     const rankingsTable = document.getElementById('rankings').getElementsByTagName('tbody')[0];
+    const notification = document.getElementById('notification');
 
     csvInput.addEventListener('input', function () {
         const csvData = csvInput.value;
@@ -8,7 +9,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const playerRatings = calculateEloRatings(matches);
         const sortedRankings = generateSortedRankings(playerRatings);
         displayRankings(sortedRankings);
+
+        copyToClipboard(sortedRankings); // Call your function to copy leaderboard to clipboard
+
+        showNotification();
     });
+
+    function showNotification() {
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000); // Hide notification after 3 seconds
+    }
 
 
 
