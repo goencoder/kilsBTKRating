@@ -1,0 +1,24 @@
+name: Build and Push to GCR
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t kilsbtk-webapp .
+
+      - name: Configure Docker and GCP credentials
+        run: |
+          echo '${{ secrets.GCR_PUSH }}' | docker login -u _json_key --password-stdin https://gcr.io
+
+      - name: Tag and Push Docker image to GCR
+        run: |
+          docker tag kilsbtk-webapp gcr.io/${{ secrets.GCP_PROJECT_ID }}/kilsbtk-webapp:latest
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/kilsbtk-webapp:latest
